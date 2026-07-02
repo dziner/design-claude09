@@ -1,14 +1,16 @@
 import * as THREE from 'three';
 
 /* ============================================================
-   MILI AI — app.js
-   Deep-blue fly-through universe + experimental UI systems
+   MILI AI — app.js  (CINEMATIC motion variant)
+   Deep-blue universe with a heavy, weighty, film-like camera
    ============================================================ */
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------------------------------------------------------------
-   1. WEBGL FLY-THROUGH UNIVERSE
+   1. WEBGL CINEMATIC UNIVERSE
+   Slow, weighty camera. Scroll drives a heavy, inertial dolly
+   through a slowly drifting deep-blue field.
    --------------------------------------------------------------- */
 function initUniverse() {
   const canvas = document.getElementById('scene');
@@ -17,12 +19,12 @@ function initUniverse() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x020510, 0.017);
+  scene.fog = new THREE.FogExp2(0x020510, 0.021);
 
-  const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 400);
+  const camera = new THREE.PerspectiveCamera(66, window.innerWidth / window.innerHeight, 0.1, 400);
   camera.position.set(0, 0, 0);
 
-  const DEPTH = 220;      // how far the field extends ahead (−Z)
+  const DEPTH = 230;      // how far the field extends ahead (−Z)
   const SPREAD = 62;      // lateral spread
 
   /* ---- Streaming starfield (the fly-through) ---- */
@@ -108,26 +110,31 @@ function initUniverse() {
 
   const clock = new THREE.Clock();
   const pos = geo.attributes.position.array;
-  const BASE = 15;
+  const BASE = 4.4;       // slow, majestic drift (was a fast fly-through)
+  let sN = 0;             // heavily-eased scroll (inertia)
 
   function animate() {
     requestAnimationFrame(animate);
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = clock.elapsedTime;
 
-    pointer.x += (pointer.tx - pointer.x) * 0.04;
-    pointer.y += (pointer.ty - pointer.y) * 0.04;
+    // weighty easing everywhere
+    pointer.x += (pointer.tx - pointer.x) * 0.02;
+    pointer.y += (pointer.ty - pointer.y) * 0.02;
+    sN += (scrollN - sN) * 0.035;             // heavy scroll inertia
 
-    const warp = 1 + scrollN * 5;   // scrolling accelerates the fly-through
+    const warp = 1 + sN * 2.2;                // gentle acceleration
+    const camZ = -sN * 48;                    // slow cinematic dolly inward
 
-    // stream particles toward the camera, recycle to the far plane
+    // slowly stream particles toward the camera, recycle relative to it
+    const recycleAt = camera.position.z + 6;
     for (let i = 0; i < COUNT; i++) {
       const iz = i * 3 + 2;
       pos[iz] += BASE * vel[i] * warp * dt;
       pos[i * 3]     += drift[i * 2] * warp;
       pos[i * 3 + 1] += drift[i * 2 + 1] * warp;
-      if (pos[iz] > 6) {
-        pos[iz] = -DEPTH;
+      if (pos[iz] > recycleAt) {
+        pos[iz] = camera.position.z - DEPTH;
         pos[i * 3]     = (Math.random() * 2 - 1) * SPREAD;
         pos[i * 3 + 1] = (Math.random() * 2 - 1) * SPREAD * 0.6;
       }
@@ -135,28 +142,30 @@ function initUniverse() {
     geo.attributes.position.needsUpdate = true;
 
     for (const r of rings) {
-      r.position.z += BASE * 0.7 * warp * dt;
-      r.rotation.z += r.userData.spin * (1 + scrollN * 3);
-      if (r.position.z > 8) {
+      r.position.z += BASE * 0.65 * warp * dt;
+      r.rotation.z += r.userData.spin * (0.5 + sN * 1.5);
+      if (r.position.z > camera.position.z + 8) {
         r.position.z -= DEPTH;
         r.position.x = (Math.random() * 2 - 1) * 9;
         r.position.y = (Math.random() * 2 - 1) * 6;
       }
     }
-    crystal.rotation.x = t * 0.12; crystal.rotation.y = t * 0.18;
-    crystal.position.z += BASE * 0.28 * warp * dt;
-    if (crystal.position.z > 18) crystal.position.z = -DEPTH;
+    // grand, slow crystal that stays ahead of the camera
+    crystal.rotation.x = t * 0.05; crystal.rotation.y = t * 0.07;
+    crystal.position.z += BASE * 0.24 * warp * dt;
+    if (crystal.position.z > camera.position.z + 16) crystal.position.z = camera.position.z - DEPTH;
     cage.position.z = crystal.position.z;
-    cage.rotation.x = -t * 0.05; cage.rotation.y = t * 0.06;
+    cage.rotation.x = -t * 0.03; cage.rotation.y = t * 0.04;
 
-    // camera banks/steers with the pointer — flight feel
-    camera.position.x += (pointer.x * 6 - camera.position.x) * 0.03;
-    camera.position.y += (-pointer.y * 4 - camera.position.y) * 0.03;
-    camera.lookAt(camera.position.x * 0.35, camera.position.y * 0.35, -24);
-    camera.rotation.z += (-pointer.x * 0.10 - camera.rotation.z) * 0.04;
+    // heavy, slow camera — steers a touch with the pointer, dollies with scroll
+    camera.position.x += (pointer.x * 4 - camera.position.x) * 0.02;
+    camera.position.y += (-pointer.y * 3 - camera.position.y) * 0.02;
+    camera.position.z += (camZ - camera.position.z) * 0.02;
+    camera.lookAt(camera.position.x * 0.3, camera.position.y * 0.3, camera.position.z - 26);
+    camera.rotation.z += (-pointer.x * 0.05 - camera.rotation.z) * 0.02;
 
-    mat.size = 0.5 + scrollN * 0.45;         // subtle streak as warp rises
-    mat.opacity = 0.85 + scrollN * 0.12;
+    mat.size = 0.62 + sN * 0.22;              // soft bokeh, minimal streak
+    mat.opacity = 0.9;
 
     renderer.render(scene, camera);
   }
@@ -228,7 +237,7 @@ function initCursor() {
   let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y;
   window.addEventListener('pointermove', (e) => { tx = e.clientX; ty = e.clientY; });
   (function loop() {
-    x += (tx - x) * 0.2; y += (ty - y) * 0.2;
+    x += (tx - x) * 0.12; y += (ty - y) * 0.12;   // heavier, weightier lag
     cur.style.transform = `translate(${x}px, ${y}px)`;
     requestAnimationFrame(loop);
   })();
@@ -343,6 +352,24 @@ function initClock() {
 }
 
 /* ---------------------------------------------------------------
+   10b. HERO PARALLAX EXIT (cinematic)
+   --------------------------------------------------------------- */
+function initHeroParallax() {
+  if (reduced) return;
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+  let y = 0, ty = 0;
+  window.addEventListener('scroll', () => { ty = window.scrollY; }, { passive: true });
+  (function loop() {
+    requestAnimationFrame(loop);
+    y += (ty - y) * 0.08;                      // heavy inertia
+    const p = Math.min(y / (window.innerHeight * 0.9), 1);
+    hero.style.transform = `translate3d(0, ${(y * 0.28).toFixed(1)}px, 0)`;
+    hero.style.opacity = String(1 - p * 0.92);
+  })();
+}
+
+/* ---------------------------------------------------------------
    10. SMOOTH SCROLL BUTTONS + FORM
    --------------------------------------------------------------- */
 function initNavigation() {
@@ -374,5 +401,6 @@ window.addEventListener('DOMContentLoaded', () => {
   initBars();
   initCounters();
   initClock();
+  initHeroParallax();
   initNavigation();
 });
