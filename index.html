@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AETHER — an immersive sci-fi holographic universe. Cinematic particle simulations, floating glass interfaces and experimental motion." />
+  <title>AETHER — Holographic Universe</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2338f0ff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Boot / preloader -->
+  <div id="boot" class="boot">
+    <div class="boot__inner">
+      <div class="boot__ring"></div>
+      <div class="boot__glyph">AE</div>
+      <div class="boot__label">INITIALIZING NEURAL LATTICE</div>
+      <div class="boot__bar"><span id="bootFill" class="boot__fill"></span></div>
+      <div class="boot__pct"><span id="bootPct">0</span>%</div>
+    </div>
+  </div>
+
+  <!-- WebGL particle universe -->
+  <canvas id="scene"></canvas>
+  <div class="grain"></div>
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"><span></span></div>
+
+  <!-- HUD frame -->
+  <div class="hud" aria-hidden="true">
+    <div class="hud__corner hud__corner--tl"></div>
+    <div class="hud__corner hud__corner--tr"></div>
+    <div class="hud__corner hud__corner--bl"></div>
+    <div class="hud__corner hud__corner--br"></div>
+    <div class="hud__ticks hud__ticks--left"></div>
+    <div class="hud__ticks hud__ticks--right"></div>
+  </div>
+
+  <!-- Nav -->
+  <header class="nav">
+    <a class="nav__brand" href="#home" data-nav>
+      <span class="nav__mark"></span>
+      <span class="nav__name">AETHER<i>·SYS</i></span>
+    </a>
+    <nav class="nav__links">
+      <a href="#universe" data-nav>Universe</a>
+      <a href="#modules" data-nav>Modules</a>
+      <a href="#signal" data-nav>Signal</a>
+      <a href="#access" data-nav>Access</a>
+    </nav>
+    <div class="nav__status">
+      <span class="dot"></span><span id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section id="home" class="hero panel" data-panel>
+      <div class="hero__tag reveal">
+        <span class="hero__tag-dot"></span> SYSTEM ONLINE · SECTOR 09
+      </div>
+      <h1 class="hero__title">
+        <span class="line reveal">ENTER THE</span>
+        <span class="line grad reveal">HOLOGRAPHIC</span>
+        <span class="line reveal">UNIVERSE</span>
+      </h1>
+      <p class="hero__sub reveal">
+        A next-gen digital dimension of floating interfaces, cinematic particle
+        fields and surreal motion. Drift through an abstract 3D expanse built for
+        the ones who see beyond the screen.
+      </p>
+      <div class="hero__cta reveal">
+        <button class="btn btn--primary" data-scroll="#universe">
+          <span>Launch Sequence</span>
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn btn--ghost" data-scroll="#modules">Explore Modules</button>
+      </div>
+      <div class="hero__stats reveal">
+        <div class="stat"><b data-count="128">0</b><span>Nodes Linked</span></div>
+        <div class="stat"><b data-count="99" data-suffix="%">0</b><span>Sync Integrity</span></div>
+        <div class="stat"><b data-count="42" data-suffix="k">0</b><span>Particles Live</span></div>
+      </div>
+      <div class="hero__scroll">SCROLL TO DESCEND <i></i></div>
+    </section>
+
+    <!-- UNIVERSE -->
+    <section id="universe" class="section panel" data-panel>
+      <div class="section__head reveal">
+        <span class="eyebrow">01 — The Expanse</span>
+        <h2>A living field of <em>light &amp; motion</em></h2>
+        <p>Millions of luminous particles orchestrated by fluid motion systems.
+           Move your cursor to bend the field — the universe responds to your presence.</p>
+      </div>
+      <div class="glass-grid">
+        <article class="glass card tilt reveal">
+          <div class="card__glow"></div>
+          <div class="card__icon">◇</div>
+          <h3>Fluid Particle Core</h3>
+          <p>GPU-driven simulation of drifting stardust, curling through invisible
+             vector fields for endless organic motion.</p>
+          <span class="card__meta">WEBGL · REALTIME</span>
+        </article>
+        <article class="glass card tilt reveal">
+          <div class="card__glow"></div>
+          <div class="card__icon">⬡</div>
+          <h3>Depth Parallax</h3>
+          <p>Layered holographic planes glide at different speeds, forging a sense
+             of infinite cinematic depth around you.</p>
+          <span class="card__meta">LAYERED · Z-SPACE</span>
+        </article>
+        <article class="glass card tilt reveal">
+          <div class="card__glow"></div>
+          <div class="card__icon">✦</div>
+          <h3>Neon Atmosphere</h3>
+          <p>Volumetric glow, chromatic gradients and soft bloom wrap the scene in
+             a surreal, dreamlike haze.</p>
+          <span class="card__meta">BLOOM · GRADIENT</span>
+        </article>
+      </div>
+    </section>
+
+    <!-- MODULES -->
+    <section id="modules" class="section panel" data-panel>
+      <div class="section__head reveal">
+        <span class="eyebrow">02 — Interface Modules</span>
+        <h2>Experimental <em>UI systems</em></h2>
+        <p>Floating glass modules that feel alive — reactive, magnetic and layered
+           in depth. Hover to feel the interface breathe.</p>
+      </div>
+      <div class="modules">
+        <div class="module glass reveal" data-mod>
+          <div class="module__no">M-01</div>
+          <h3>Holo Console</h3>
+          <p>A translucent control surface with parallax glare and reactive edges.</p>
+          <div class="module__viz viz-console"><span></span><span></span><span></span><span></span></div>
+        </div>
+        <div class="module glass reveal" data-mod>
+          <div class="module__no">M-02</div>
+          <h3>Signal Waveform</h3>
+          <p>Live oscilloscope pulse rendered from the ambient neural stream.</p>
+          <div class="module__viz viz-wave"><canvas id="wave"></canvas></div>
+        </div>
+        <div class="module glass reveal" data-mod>
+          <div class="module__no">M-03</div>
+          <h3>Orbital Ring</h3>
+          <p>A rotating data ring mapping node telemetry across the lattice.</p>
+          <div class="module__viz viz-orbit"><i></i><i></i><i></i><b></b></div>
+        </div>
+        <div class="module glass reveal" data-mod>
+          <div class="module__no">M-04</div>
+          <h3>Flux Meter</h3>
+          <p>Animated energy bars visualizing throughput of the particle core.</p>
+          <div class="module__viz viz-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIGNAL / marquee -->
+    <section id="signal" class="marquee-wrap panel" data-panel>
+      <div class="marquee reveal">
+        <div class="marquee__track">
+          <span>IMMERSIVE ✦ CINEMATIC ✦ SURREAL ✦ HOLOGRAPHIC ✦ NEON ✦ FLUID ✦ NEXT-GEN ✦ </span>
+          <span>IMMERSIVE ✦ CINEMATIC ✦ SURREAL ✦ HOLOGRAPHIC ✦ NEON ✦ FLUID ✦ NEXT-GEN ✦ </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCESS / CTA -->
+    <section id="access" class="section access panel" data-panel>
+      <div class="access__card glass reveal">
+        <div class="access__glowline"></div>
+        <span class="eyebrow">03 — Request Access</span>
+        <h2>Step through the <em>portal</em></h2>
+        <p>Join the transmission. Enter your signal address to receive coordinates
+           for the next dimension.</p>
+        <form class="access__form" id="accessForm">
+          <input type="email" placeholder="your@signal.net" required aria-label="email" />
+          <button class="btn btn--primary" type="submit">
+            <span>Transmit</span>
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+        <div class="access__note" id="accessNote"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© 2087 AETHER SYSTEMS</span>
+    <span class="footer__mid">DESIGNED FOR THE DIGITAL UNKNOWN</span>
+    <span>LAT 09·442 / LON 12·118</span>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
