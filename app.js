@@ -1,14 +1,14 @@
 import * as THREE from 'three';
 
 /* ============================================================
-   AETHER — app.js
-   WebGL particle universe + experimental UI systems
+   MILI AI — app.js
+   Deep-blue fly-through universe + experimental UI systems
    ============================================================ */
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------------------------------------------------------------
-   1. WEBGL PARTICLE UNIVERSE
+   1. WEBGL FLY-THROUGH UNIVERSE
    --------------------------------------------------------------- */
 function initUniverse() {
   const canvas = document.getElementById('scene');
@@ -17,97 +17,86 @@ function initUniverse() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x04060f, 0.055);
+  scene.fog = new THREE.FogExp2(0x020510, 0.017);
 
-  const camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 14);
+  const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 400);
+  camera.position.set(0, 0, 0);
 
-  const group = new THREE.Group();
-  scene.add(group);
+  const DEPTH = 220;      // how far the field extends ahead (−Z)
+  const SPREAD = 62;      // lateral spread
 
-  /* ---- Particle field (fluid drifting stardust) ---- */
-  const COUNT = reduced ? 2200 : 7000;
+  /* ---- Streaming starfield (the fly-through) ---- */
+  const COUNT = reduced ? 2600 : 9000;
   const positions = new Float32Array(COUNT * 3);
   const colors = new Float32Array(COUNT * 3);
-  const seeds = new Float32Array(COUNT);
-  const speeds = new Float32Array(COUNT);
+  const vel = new Float32Array(COUNT);
+  const drift = new Float32Array(COUNT * 2);
 
+  // tight blue family — deep electric → icy white
   const palette = [
-    new THREE.Color(0x38f0ff),
-    new THREE.Color(0x8a5cff),
-    new THREE.Color(0xff4bd8),
-    new THREE.Color(0x7dffb2),
+    new THREE.Color(0xdfefff), // near white
+    new THREE.Color(0x9fdcff), // icy
+    new THREE.Color(0x9fdcff),
+    new THREE.Color(0x4fa8ff), // azure
+    new THREE.Color(0x4fa8ff),
+    new THREE.Color(0x2f6bff), // electric blue
   ];
 
   for (let i = 0; i < COUNT; i++) {
-    // distribute in a soft spherical shell for a "nebula" feel
-    const r = 6 + Math.random() * 16;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    positions[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
-    positions[i * 3 + 1] = (r * Math.cos(phi)) * 0.6;
-    positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-
-    const c = palette[(Math.random() * palette.length) | 0].clone();
-    c.multiplyScalar(0.6 + Math.random() * 0.6);
+    positions[i * 3]     = (Math.random() * 2 - 1) * SPREAD;
+    positions[i * 3 + 1] = (Math.random() * 2 - 1) * SPREAD * 0.6;
+    positions[i * 3 + 2] = -Math.random() * DEPTH;
+    const c = palette[(Math.random() * palette.length) | 0];
     colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
-
-    seeds[i] = Math.random() * Math.PI * 2;
-    speeds[i] = 0.2 + Math.random() * 0.8;
+    vel[i] = 0.55 + Math.random() * 0.95;
+    drift[i * 2]     = (Math.random() * 2 - 1) * 0.05;
+    drift[i * 2 + 1] = (Math.random() * 2 - 1) * 0.05;
   }
 
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-  // soft round sprite texture
   const sprite = makeSprite();
   const mat = new THREE.PointsMaterial({
-    size: 0.14,
-    map: sprite,
-    vertexColors: true,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    sizeAttenuation: true,
-    opacity: 0.9,
+    size: 0.55, map: sprite, vertexColors: true, transparent: true,
+    depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true, opacity: 0.95,
   });
   const points = new THREE.Points(geo, mat);
-  group.add(points);
+  scene.add(points);
 
-  /* ---- Distant faint star haze ---- */
-  const hazeGeo = new THREE.BufferGeometry();
-  const HAZE = reduced ? 800 : 2500;
-  const hp = new Float32Array(HAZE * 3);
-  for (let i = 0; i < HAZE; i++) {
-    hp[i * 3]     = (Math.random() - 0.5) * 90;
-    hp[i * 3 + 1] = (Math.random() - 0.5) * 60;
-    hp[i * 3 + 2] = (Math.random() - 0.5) * 90 - 20;
+  /* ---- Wireframe rings you fly through ---- */
+  const rings = [];
+  for (let i = 0; i < 6; i++) {
+    const r = new THREE.Mesh(
+      new THREE.TorusGeometry(9 + Math.random() * 6, 0.10, 8, 72),
+      new THREE.MeshBasicMaterial({ color: 0x2f6bff, wireframe: true, transparent: true, opacity: 0.16 })
+    );
+    r.position.set((Math.random() * 2 - 1) * 9, (Math.random() * 2 - 1) * 6, -26 - i * (DEPTH / 6));
+    r.rotation.z = Math.random() * Math.PI;
+    r.userData.spin = (Math.random() * 2 - 1) * 0.004;
+    rings.push(r); scene.add(r);
   }
-  hazeGeo.setAttribute('position', new THREE.BufferAttribute(hp, 3));
-  const haze = new THREE.Points(hazeGeo, new THREE.PointsMaterial({
-    size: 0.08, color: 0x9fb0d6, transparent: true, opacity: 0.35,
-    map: sprite, depthWrite: false, blending: THREE.AdditiveBlending,
-  }));
-  scene.add(haze);
 
-  /* ---- Glowing wireframe orb (abstract 3D environment) ---- */
-  const orb = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(3.4, 2),
-    new THREE.MeshBasicMaterial({ color: 0x38f0ff, wireframe: true, transparent: true, opacity: 0.09 })
+  /* ---- Iridescent crystalline centerpiece (fly past it) ---- */
+  const crystalGeo = new THREE.OctahedronGeometry(9, 0);
+  crystalGeo.scale(1, 1.8, 1);            // elongated shard
+  const crystal = new THREE.Mesh(
+    crystalGeo,
+    new THREE.MeshNormalMaterial({ flatShading: true, transparent: true, opacity: 0.55 })
   );
-  group.add(orb);
-
-  const orb2 = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(4.8, 1),
-    new THREE.MeshBasicMaterial({ color: 0x8a5cff, wireframe: true, transparent: true, opacity: 0.06 })
+  crystal.position.z = -DEPTH * 0.75;
+  scene.add(crystal);
+  // faint wireframe cage around the crystal
+  const cage = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(12, 1),
+    new THREE.MeshBasicMaterial({ color: 0x4fa8ff, wireframe: true, transparent: true, opacity: 0.10 })
   );
-  group.add(orb2);
+  scene.add(cage);
 
   /* ---- Interaction state ---- */
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
   let scrollN = 0;
-
   window.addEventListener('pointermove', (e) => {
     pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
     pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
@@ -119,46 +108,55 @@ function initUniverse() {
 
   const clock = new THREE.Clock();
   const pos = geo.attributes.position.array;
-  const base = positions.slice();
+  const BASE = 15;
 
   function animate() {
     requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
+    const dt = Math.min(clock.getDelta(), 0.05);
+    const t = clock.elapsedTime;
 
-    // smooth pointer easing
-    pointer.x += (pointer.tx - pointer.x) * 0.05;
-    pointer.y += (pointer.ty - pointer.y) * 0.05;
+    pointer.x += (pointer.tx - pointer.x) * 0.04;
+    pointer.y += (pointer.ty - pointer.y) * 0.04;
 
-    // fluid motion — curl-like displacement per particle
-    if (!reduced) {
-      for (let i = 0; i < COUNT; i++) {
-        const ix = i * 3;
-        const s = seeds[i];
-        const sp = speeds[i];
-        pos[ix]     = base[ix]     + Math.sin(t * 0.3 * sp + s) * 0.6;
-        pos[ix + 1] = base[ix + 1] + Math.cos(t * 0.25 * sp + s) * 0.6;
-        pos[ix + 2] = base[ix + 2] + Math.sin(t * 0.2 * sp + s * 1.3) * 0.6;
+    const warp = 1 + scrollN * 5;   // scrolling accelerates the fly-through
+
+    // stream particles toward the camera, recycle to the far plane
+    for (let i = 0; i < COUNT; i++) {
+      const iz = i * 3 + 2;
+      pos[iz] += BASE * vel[i] * warp * dt;
+      pos[i * 3]     += drift[i * 2] * warp;
+      pos[i * 3 + 1] += drift[i * 2 + 1] * warp;
+      if (pos[iz] > 6) {
+        pos[iz] = -DEPTH;
+        pos[i * 3]     = (Math.random() * 2 - 1) * SPREAD;
+        pos[i * 3 + 1] = (Math.random() * 2 - 1) * SPREAD * 0.6;
       }
-      geo.attributes.position.needsUpdate = true;
     }
+    geo.attributes.position.needsUpdate = true;
 
-    // group rotation reacts to pointer + scroll (camera-like drift)
-    group.rotation.y += 0.0006 + pointer.x * 0.0015;
-    group.rotation.x += pointer.y * 0.0006;
-    group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, group.rotation.y, 1);
+    for (const r of rings) {
+      r.position.z += BASE * 0.7 * warp * dt;
+      r.rotation.z += r.userData.spin * (1 + scrollN * 3);
+      if (r.position.z > 8) {
+        r.position.z -= DEPTH;
+        r.position.x = (Math.random() * 2 - 1) * 9;
+        r.position.y = (Math.random() * 2 - 1) * 6;
+      }
+    }
+    crystal.rotation.x = t * 0.12; crystal.rotation.y = t * 0.18;
+    crystal.position.z += BASE * 0.28 * warp * dt;
+    if (crystal.position.z > 18) crystal.position.z = -DEPTH;
+    cage.position.z = crystal.position.z;
+    cage.rotation.x = -t * 0.05; cage.rotation.y = t * 0.06;
 
-    orb.rotation.x = t * 0.08; orb.rotation.y = t * 0.05;
-    orb2.rotation.y = -t * 0.04; orb2.rotation.z = t * 0.03;
-    haze.rotation.y = t * 0.01;
+    // camera banks/steers with the pointer — flight feel
+    camera.position.x += (pointer.x * 6 - camera.position.x) * 0.03;
+    camera.position.y += (-pointer.y * 4 - camera.position.y) * 0.03;
+    camera.lookAt(camera.position.x * 0.35, camera.position.y * 0.35, -24);
+    camera.rotation.z += (-pointer.x * 0.10 - camera.rotation.z) * 0.04;
 
-    // camera glides forward on scroll — "descend" through the field
-    camera.position.z = 14 - scrollN * 8;
-    camera.position.x += (pointer.x * 2.2 - camera.position.x) * 0.04;
-    camera.position.y += (-pointer.y * 1.6 - camera.position.y) * 0.04;
-    camera.lookAt(0, 0, 0);
-
-    // hue drift on particles for living neon
-    mat.size = 0.14 + Math.sin(t * 0.8) * 0.02;
+    mat.size = 0.5 + scrollN * 0.45;         // subtle streak as warp rises
+    mat.opacity = 0.85 + scrollN * 0.12;
 
     renderer.render(scene, camera);
   }
@@ -177,13 +175,12 @@ function makeSprite() {
   const ctx = c.getContext('2d');
   const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
   g.addColorStop(0, 'rgba(255,255,255,1)');
-  g.addColorStop(0.25, 'rgba(255,255,255,0.85)');
-  g.addColorStop(0.5, 'rgba(255,255,255,0.25)');
-  g.addColorStop(1, 'rgba(255,255,255,0)');
+  g.addColorStop(0.25, 'rgba(220,238,255,0.85)');
+  g.addColorStop(0.5, 'rgba(160,210,255,0.22)');
+  g.addColorStop(1, 'rgba(160,210,255,0)');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 64, 64);
-  const tex = new THREE.CanvasTexture(c);
-  return tex;
+  return new THREE.CanvasTexture(c);
 }
 
 /* ---------------------------------------------------------------
@@ -284,10 +281,10 @@ function initWave() {
     const w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
     const grad = ctx.createLinearGradient(0, 0, w, 0);
-    grad.addColorStop(0, '#38f0ff'); grad.addColorStop(0.5, '#8a5cff'); grad.addColorStop(1, '#ff4bd8');
+    grad.addColorStop(0, '#7fe0ff'); grad.addColorStop(0.5, '#4fa8ff'); grad.addColorStop(1, '#2f6bff');
     ctx.strokeStyle = grad;
     ctx.lineWidth = 2 * devicePixelRatio;
-    ctx.shadowBlur = 12; ctx.shadowColor = '#38f0ff';
+    ctx.shadowBlur = 12; ctx.shadowColor = '#4fa8ff';
     ctx.beginPath();
     for (let x = 0; x <= w; x += 4) {
       const n = x / w;
@@ -341,9 +338,7 @@ function initCounters() {
    --------------------------------------------------------------- */
 function initClock() {
   const el = document.getElementById('clock');
-  setInterval(() => {
-    el.textContent = new Date().toLocaleTimeString('en-GB');
-  }, 1000);
+  setInterval(() => { el.textContent = new Date().toLocaleTimeString('en-GB'); }, 1000);
   el.textContent = new Date().toLocaleTimeString('en-GB');
 }
 
@@ -360,7 +355,7 @@ function initNavigation() {
   const note = document.getElementById('accessNote');
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
-    note.textContent = '◈ SIGNAL RECEIVED — COORDINATES DISPATCHED';
+    note.textContent = '◈ TRANSMISSION RECEIVED — 신병 훈련소 좌표를 전송했습니다.';
     form.reset();
     setTimeout(() => { note.textContent = ''; }, 4200);
   });
