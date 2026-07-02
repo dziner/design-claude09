@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AETHER — an immersive sci-fi holographic universe. Cinematic particle simulations, floating glass interfaces and experimental motion." />
-  <title>AETHER — Holographic Universe</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2338f0ff'/%3E%3C/svg%3E" />
+  <meta name="description" content="MILI AI — 군장병을 위한 게임형 AI 코딩 훈련 플랫폼. 학습 우주를 탐험하고 미션을 클리어하며 미래 사이버 전력으로 성장하세요." />
+  <title>MILI AI — 군장병 AI 코딩 훈련소</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23050713'/%3E%3Crect x='16' y='4' width='12' height='24' rx='2' fill='%2338f0ff'/%3E%3Ctext x='22' y='21' font-family='Arial' font-weight='700' font-size='12' fill='%23050713' text-anchor='middle'%3EA%3C/text%3E%3Ctext x='9' y='21' font-family='Arial' font-weight='700' font-size='12' fill='%23eaf2ff' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="stylesheet" href="styles.css" />
   <script type="importmap">
   {
@@ -23,8 +24,10 @@
   <div id="boot" class="boot">
     <div class="boot__inner">
       <div class="boot__ring"></div>
-      <div class="boot__glyph">AE</div>
-      <div class="boot__label">INITIALIZING NEURAL LATTICE</div>
+      <div class="boot__glyph logo logo--boot">
+        <span class="logo__word">MILI</span><span class="logo__box">AI</span>
+      </div>
+      <div class="boot__label">전술 네트워크 접속 중 · CYBER FORCE</div>
       <div class="boot__bar"><span id="bootFill" class="boot__fill"></span></div>
       <div class="boot__pct"><span id="bootPct">0</span>%</div>
     </div>
@@ -51,18 +54,17 @@
 
   <!-- Nav -->
   <header class="nav">
-    <a class="nav__brand" href="#home" data-nav>
-      <span class="nav__mark"></span>
-      <span class="nav__name">AETHER<i>·SYS</i></span>
+    <a class="nav__brand logo" href="#home" data-nav aria-label="MILI AI 홈">
+      <span class="logo__word">MILI</span><span class="logo__box">AI</span>
     </a>
     <nav class="nav__links">
-      <a href="#universe" data-nav>Universe</a>
-      <a href="#modules" data-nav>Modules</a>
-      <a href="#signal" data-nav>Signal</a>
-      <a href="#access" data-nav>Access</a>
+      <a href="#universe" data-nav>학습 우주</a>
+      <a href="#campaigns" data-nav>병과 작전</a>
+      <a href="#ranks" data-nav>계급 · 훈장</a>
+      <a href="#enlist" data-nav>입대</a>
     </nav>
     <div class="nav__status">
-      <span class="dot"></span><span id="clock">--:--:--</span>
+      <span class="dot"></span><span>가동중</span><span id="clock">--:--:--</span>
     </div>
   </header>
 
@@ -70,101 +72,184 @@
     <!-- HERO -->
     <section id="home" class="hero panel" data-panel>
       <div class="hero__tag reveal">
-        <span class="hero__tag-dot"></span> SYSTEM ONLINE · SECTOR 09
+        <span class="hero__tag-dot"></span> AI 코딩 훈련소 · 대한민국 군장병 전용
       </div>
       <h1 class="hero__title">
-        <span class="line reveal">ENTER THE</span>
-        <span class="line grad reveal">HOLOGRAPHIC</span>
-        <span class="line reveal">UNIVERSE</span>
+        <span class="line reveal">미션을 수행하고</span>
+        <span class="line grad reveal">코드 우주를</span>
+        <span class="line reveal">정복하라</span>
       </h1>
       <p class="hero__sub reveal">
-        A next-gen digital dimension of floating interfaces, cinematic particle
-        fields and surreal motion. Drift through an abstract 3D expanse built for
-        the ones who see beyond the screen.
+        <b>MILI AI</b>는 군 복무 기간을 미래 개발자로 성장시키는 게임형 AI 코딩 훈련
+        플랫폼입니다. 광활한 학습 우주를 탐험하고, 실전 미션을 클리어하고, 계급을
+        올리며 대한민국의 미래 사이버 전력이 되세요.
       </p>
       <div class="hero__cta reveal">
         <button class="btn btn--primary" data-scroll="#universe">
-          <span>Launch Sequence</span>
+          <span>훈련 시작하기</span>
           <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
-        <button class="btn btn--ghost" data-scroll="#modules">Explore Modules</button>
+        <button class="btn btn--ghost" data-scroll="#campaigns">미션 살펴보기</button>
       </div>
       <div class="hero__stats reveal">
-        <div class="stat"><b data-count="128">0</b><span>Nodes Linked</span></div>
-        <div class="stat"><b data-count="99" data-suffix="%">0</b><span>Sync Integrity</span></div>
-        <div class="stat"><b data-count="42" data-suffix="k">0</b><span>Particles Live</span></div>
+        <div class="stat"><b data-count="12800" data-suffix="+">0</b><span>입대 병사</span></div>
+        <div class="stat"><b data-count="340" data-suffix="+">0</b><span>실전 미션</span></div>
+        <div class="stat"><b data-count="6">0</b><span>전문 병과</span></div>
+        <div class="stat"><b data-count="98" data-suffix="%">0</b><span>훈련 완주율</span></div>
       </div>
-      <div class="hero__scroll">SCROLL TO DESCEND <i></i></div>
+      <div class="hero__scroll">우주로 진입 <i></i></div>
     </section>
 
     <!-- UNIVERSE -->
     <section id="universe" class="section panel" data-panel>
       <div class="section__head reveal">
-        <span class="eyebrow">01 — The Expanse</span>
-        <h2>A living field of <em>light &amp; motion</em></h2>
-        <p>Millions of luminous particles orchestrated by fluid motion systems.
-           Move your cursor to bend the field — the universe responds to your presence.</p>
+        <span class="eyebrow">01 — 학습 우주</span>
+        <h2>하나의 우주, 무한한 <em>미션</em></h2>
+        <p>MILI AI의 학습 우주에는 각 병과를 상징하는 성계(星系)가 흩어져 있습니다.
+           커서를 움직여 우주를 항해하세요 — 세계는 당신의 손끝에 반응합니다.</p>
       </div>
       <div class="glass-grid">
         <article class="glass card tilt reveal">
           <div class="card__glow"></div>
           <div class="card__icon">◇</div>
-          <h3>Fluid Particle Core</h3>
-          <p>GPU-driven simulation of drifting stardust, curling through invisible
-             vector fields for endless organic motion.</p>
-          <span class="card__meta">WEBGL · REALTIME</span>
+          <h3>탐험 · EXPLORE</h3>
+          <p>병과별 성계를 항해하며 나만의 학습 항로를 개척합니다. 정해진 답이
+             아니라, 스스로 길을 찾아가는 여정.</p>
+          <span class="card__meta">EXPLORE · 자유 항해</span>
         </article>
         <article class="glass card tilt reveal">
           <div class="card__glow"></div>
           <div class="card__icon">⬡</div>
-          <h3>Depth Parallax</h3>
-          <p>Layered holographic planes glide at different speeds, forging a sense
-             of infinite cinematic depth around you.</p>
-          <span class="card__meta">LAYERED · Z-SPACE</span>
+          <h3>미션 · MISSION</h3>
+          <p>AI 교관이 설계한 실전 코딩 미션. 하나씩 클리어할 때마다 경험치(XP)와
+             훈장이 차곡차곡 쌓입니다.</p>
+          <span class="card__meta">MISSION · 실전 훈련</span>
         </article>
         <article class="glass card tilt reveal">
           <div class="card__glow"></div>
           <div class="card__icon">✦</div>
-          <h3>Neon Atmosphere</h3>
-          <p>Volumetric glow, chromatic gradients and soft bloom wrap the scene in
-             a surreal, dreamlike haze.</p>
-          <span class="card__meta">BLOOM · GRADIENT</span>
+          <h3>성장 · GROWTH</h3>
+          <p>이등병에서 사이버 장교까지 — 계급으로 확인하는 확실한 실력 성장.
+             당신의 여정이 곧 전력이 됩니다.</p>
+          <span class="card__meta">GROWTH · 계급 진급</span>
         </article>
       </div>
     </section>
 
-    <!-- MODULES -->
-    <section id="modules" class="section panel" data-panel>
+    <!-- CAMPAIGNS / 병과 -->
+    <section id="campaigns" class="section panel" data-panel>
       <div class="section__head reveal">
-        <span class="eyebrow">02 — Interface Modules</span>
-        <h2>Experimental <em>UI systems</em></h2>
-        <p>Floating glass modules that feel alive — reactive, magnetic and layered
-           in depth. Hover to feel the interface breathe.</p>
+        <span class="eyebrow">02 — 병과 작전</span>
+        <h2>당신의 <em>병과</em>를 선택하라</h2>
+        <p>여섯 개의 작전 구역이 항로 위에서 대기 중입니다. 각 구역은 실전 프로젝트와
+           미션으로 구성된 하나의 캠페인입니다. 순서대로 돌파해도, 원하는 곳으로
+           점프해도 좋습니다.</p>
       </div>
       <div class="modules">
         <div class="module glass reveal" data-mod>
-          <div class="module__no">M-01</div>
-          <h3>Holo Console</h3>
-          <p>A translucent control surface with parallax glare and reactive edges.</p>
-          <div class="module__viz viz-console"><span></span><span></span><span></span><span></span></div>
-        </div>
-        <div class="module glass reveal" data-mod>
-          <div class="module__no">M-02</div>
-          <h3>Signal Waveform</h3>
-          <p>Live oscilloscope pulse rendered from the ambient neural stream.</p>
-          <div class="module__viz viz-wave"><canvas id="wave"></canvas></div>
-        </div>
-        <div class="module glass reveal" data-mod>
-          <div class="module__no">M-03</div>
-          <h3>Orbital Ring</h3>
-          <p>A rotating data ring mapping node telemetry across the lattice.</p>
-          <div class="module__viz viz-orbit"><i></i><i></i><i></i><b></b></div>
-        </div>
-        <div class="module glass reveal" data-mod>
-          <div class="module__no">M-04</div>
-          <h3>Flux Meter</h3>
-          <p>Animated energy bars visualizing throughput of the particle core.</p>
+          <div class="module__top"><span class="module__no">OP-01</span><span class="module__badge">Python</span></div>
+          <h3>신병 코딩 훈련소</h3>
+          <p>변수부터 함수까지, 코딩의 기본기를 다지는 첫 관문.</p>
           <div class="module__viz viz-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="module__foot"><span>24 미션</span><span class="xp">+4,800 XP</span><span class="diff" aria-label="난이도 1">★☆☆☆</span></div>
+        </div>
+        <div class="module glass reveal" data-mod>
+          <div class="module__top"><span class="module__no">OP-02</span><span class="module__badge">Web</span></div>
+          <h3>웹 전개 작전</h3>
+          <p>HTML·CSS·JS로 실제 작동하는 인터페이스를 전개하라.</p>
+          <div class="module__viz viz-wave"><canvas id="wave"></canvas></div>
+          <div class="module__foot"><span>30 미션</span><span class="xp">+6,200 XP</span><span class="diff" aria-label="난이도 2">★★☆☆</span></div>
+        </div>
+        <div class="module glass reveal" data-mod>
+          <div class="module__top"><span class="module__no">OP-03</span><span class="module__badge">Algorithm</span></div>
+          <h3>알고리즘 전술</h3>
+          <p>탐색·정렬·최적화로 문제를 돌파하는 전술적 사고.</p>
+          <div class="module__viz viz-orbit"><i></i><i></i><i></i><b></b></div>
+          <div class="module__foot"><span>28 미션</span><span class="xp">+7,500 XP</span><span class="diff" aria-label="난이도 3">★★★☆</span></div>
+        </div>
+        <div class="module glass reveal" data-mod>
+          <div class="module__top"><span class="module__no">OP-04</span><span class="module__badge">AI · ML</span></div>
+          <h3>AI 특수전</h3>
+          <p>데이터로 모델을 훈련시키는 미래 병기 운용술.</p>
+          <div class="module__viz viz-console"><span></span><span></span><span></span><span></span></div>
+          <div class="module__foot"><span>22 미션</span><span class="xp">+9,000 XP</span><span class="diff" aria-label="난이도 4">★★★★</span></div>
+        </div>
+        <div class="module glass reveal" data-mod>
+          <div class="module__top"><span class="module__no">OP-05</span><span class="module__badge">Data</span></div>
+          <h3>데이터 정찰</h3>
+          <p>SQL과 판다스로 전장의 데이터를 정찰하고 해석하라.</p>
+          <div class="module__viz viz-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="module__foot"><span>20 미션</span><span class="xp">+5,600 XP</span><span class="diff" aria-label="난이도 2">★★☆☆</span></div>
+        </div>
+        <div class="module glass reveal" data-mod>
+          <div class="module__top"><span class="module__no">OP-06</span><span class="module__badge">Security</span></div>
+          <h3>사이버 방벽</h3>
+          <p>취약점을 찾고 시스템을 방어하는 사이버 수호 임무.</p>
+          <div class="module__viz viz-orbit"><i></i><i></i><i></i><b></b></div>
+          <div class="module__foot"><span>18 미션</span><span class="xp">+6,800 XP</span><span class="diff" aria-label="난이도 3">★★★☆</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RANKS & MEDALS / 게임화 -->
+    <section id="ranks" class="section panel" data-panel>
+      <div class="section__head reveal">
+        <span class="eyebrow">03 — 계급 &amp; 훈장</span>
+        <h2>미션을 클리어하고 <em>진급</em>하라</h2>
+        <p>모든 미션은 경험치(XP)가 되고, 쌓인 XP는 계급이 됩니다. 훈장을 모으고
+           리더보드를 정복하며 최고의 사이버 전사로 성장하세요.</p>
+      </div>
+
+      <div class="ranks-grid">
+        <!-- 병사 카드 -->
+        <div class="player glass reveal">
+          <div class="player__glowline"></div>
+          <div class="player__head">
+            <div class="player__insignia">▲▲</div>
+            <div>
+              <div class="player__rank">상병 · CORPORAL</div>
+              <div class="player__name">OPERATOR-0921 · 김코딩</div>
+            </div>
+            <div class="player__lv">LV.<b data-count="14">0</b></div>
+          </div>
+
+          <div class="xpbar" style="--xp:81%">
+            <div class="xpbar__fill"></div>
+            <div class="xpbar__label"><span>다음 계급까지</span><span><b data-count="7320">0</b> / 9,000 XP</span></div>
+          </div>
+
+          <div class="player__stats">
+            <div><b data-count="128">0</b><span>미션 클리어</span></div>
+            <div><b data-count="42">0</b><span>연속 훈련일</span></div>
+            <div><b data-count="96" data-suffix="%">0</b><span>코드 정확도</span></div>
+          </div>
+        </div>
+
+        <!-- 진급 래더 + 훈장 -->
+        <div class="ranks-right">
+          <div class="ladder glass reveal">
+            <div class="ladder__title">진급 경로 · PROMOTION PATH</div>
+            <ol class="ladder__steps">
+              <li class="done"><i></i><span>이등병</span></li>
+              <li class="done"><i></i><span>일병</span></li>
+              <li class="current"><i></i><span>상병</span></li>
+              <li><i></i><span>병장</span></li>
+              <li><i></i><span>하사</span></li>
+              <li><i></i><span>사이버 장교</span></li>
+            </ol>
+          </div>
+
+          <div class="medals glass reveal">
+            <div class="ladder__title">획득 훈장 · MEDALS</div>
+            <div class="medals__grid">
+              <div class="medal"><span class="medal__ico">⚡</span><span>첫 컴파일</span></div>
+              <div class="medal"><span class="medal__ico">◎</span><span>무결점 디버거</span></div>
+              <div class="medal"><span class="medal__ico">🔥</span><span>7일 연속</span></div>
+              <div class="medal"><span class="medal__ico">🏅</span><span>100 미션</span></div>
+              <div class="medal locked"><span class="medal__ico">🛡</span><span>보안 수호자</span></div>
+              <div class="medal locked"><span class="medal__ico">🚀</span><span>AI 개척자</span></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -173,24 +258,24 @@
     <section id="signal" class="marquee-wrap panel" data-panel>
       <div class="marquee reveal">
         <div class="marquee__track">
-          <span>IMMERSIVE ✦ CINEMATIC ✦ SURREAL ✦ HOLOGRAPHIC ✦ NEON ✦ FLUID ✦ NEXT-GEN ✦ </span>
-          <span>IMMERSIVE ✦ CINEMATIC ✦ SURREAL ✦ HOLOGRAPHIC ✦ NEON ✦ FLUID ✦ NEXT-GEN ✦ </span>
+          <span>미션 클리어 ✦ XP 획득 ✦ 계급 진급 ✦ 훈장 수여 ✦ 코드 정복 ✦ 미래 전력 ✦ </span>
+          <span>미션 클리어 ✦ XP 획득 ✦ 계급 진급 ✦ 훈장 수여 ✦ 코드 정복 ✦ 미래 전력 ✦ </span>
         </div>
       </div>
     </section>
 
-    <!-- ACCESS / CTA -->
-    <section id="access" class="section access panel" data-panel>
+    <!-- ENLIST / CTA -->
+    <section id="enlist" class="section access panel" data-panel>
       <div class="access__card glass reveal">
         <div class="access__glowline"></div>
-        <span class="eyebrow">03 — Request Access</span>
-        <h2>Step through the <em>portal</em></h2>
-        <p>Join the transmission. Enter your signal address to receive coordinates
-           for the next dimension.</p>
+        <span class="eyebrow">04 — 입대 신청</span>
+        <h2>미래 사이버 전력에 <em>입대</em>하라</h2>
+        <p>군번과 함께 새로운 여정이 시작됩니다. 이메일을 남기면 신병 훈련소
+           좌표를 전송해 드립니다.</p>
         <form class="access__form" id="accessForm">
-          <input type="email" placeholder="your@signal.net" required aria-label="email" />
+          <input type="email" placeholder="your@signal.mil" required aria-label="이메일" />
           <button class="btn btn--primary" type="submit">
-            <span>Transmit</span>
+            <span>입대 신청</span>
             <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </button>
         </form>
@@ -200,9 +285,9 @@
   </main>
 
   <footer class="footer">
-    <span>© 2087 AETHER SYSTEMS</span>
-    <span class="footer__mid">DESIGNED FOR THE DIGITAL UNKNOWN</span>
-    <span>LAT 09·442 / LON 12·118</span>
+    <span>© 2026 MILI AI · 사이버 전력 사령부</span>
+    <span class="footer__mid">미래를 위한 코드, 코드를 위한 훈련</span>
+    <span>SECTOR 09 · CYBER FORCE</span>
   </footer>
 
   <script type="module" src="app.js"></script>

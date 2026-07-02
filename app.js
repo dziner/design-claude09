@@ -323,10 +323,11 @@ function initCounters() {
       const suffix = el.dataset.suffix || '';
       let n = 0;
       const step = target / 60;
+      const fmt = (v) => Math.floor(v).toLocaleString('en-US');
       (function run() {
         n += step;
-        if (n >= target) { el.textContent = target + suffix; return; }
-        el.textContent = Math.floor(n) + suffix;
+        if (n >= target) { el.textContent = target.toLocaleString('en-US') + suffix; return; }
+        el.textContent = fmt(n) + suffix;
         requestAnimationFrame(run);
       })();
       io.unobserve(el);
